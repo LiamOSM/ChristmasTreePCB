@@ -25,10 +25,8 @@ unsigned long lastTime = 0;
 // modes:
 // 0 = off
 // 1 = all on
-// 2 = single chase
-// 3 = inverted chase
-// 4 = side to side
-// 5 = ???
+// 2 = flash
+// ... add more
 
 void setup() {
   pinMode(latchPin, OUTPUT);
@@ -41,6 +39,7 @@ void setup() {
 void loop() {
   if (music) {
     music = false;
+    // music goes here (beeping as placeholder)
     for (int i = 0; i < 100; i ++) {
       tone(spkrPin, 500);
       fullLED();
@@ -72,22 +71,6 @@ void loop() {
     }
   }
 
-  //  for (int i = 1; i <= 9; i ++) {
-  //    setLED(i, 1);
-  //    delay(90);
-  //  }
-  //  for (int i = 1; i <= 9; i ++) {
-  //    setLED(i, 0);
-  //    delay(90);
-  //  }
-  //  for (int i = 9; i >= 1; i --) {
-  //    setLED(i, 1);
-  //    delay(90);
-  //  }
-  //  for (int i = 9; i >= 1; i --) {
-  //    setLED(i, 0);
-  //    delay(90);
-  //  }
 
   int reading = analogRead(A0);
   if (abs(reading - btnLightThreshold) < tolerance) { // light button pressed
@@ -102,6 +85,8 @@ void loop() {
   }
 }
 
+// pass the index and a boolean to turn a specific LED on or off
+// eg. setLED(3, 0) < this turns led 3 off
 void setLED(int index, bool state) {
   // the states are all inverted because I'm too lazy to invert
   // each ternary statement, and I accidentalyl made them all
