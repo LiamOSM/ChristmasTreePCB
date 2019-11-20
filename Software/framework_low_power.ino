@@ -97,23 +97,6 @@ void loop() {
     }
   }
 
-  //  for (int i = 1; i <= 9; i ++) {
-  //    setLED(i, 1);
-  //    delay(90);
-  //  }
-  //  for (int i = 1; i <= 9; i ++) {
-  //    setLED(i, 0);
-  //    delay(90);
-  //  }
-  //  for (int i = 9; i >= 1; i --) {
-  //    setLED(i, 1);
-  //    delay(90);
-  //  }
-  //  for (int i = 9; i >= 1; i --) {
-  //    setLED(i, 0);
-  //    delay(90);
-  //  }
-
   int reading = analogRead(A0);
   // check if music button pressed
   if (abs(reading - btnMusicThreshold) < tolerance) {
