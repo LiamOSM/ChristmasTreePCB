@@ -29,7 +29,7 @@ uint8_t mode = 0;
 uint8_t complete = 0;
 
 uint8_t music = 0;
-uint8_t max_state = 6; // last LED mode, rollover to zero next
+uint8_t max_state = 7; // last LED mode, rollover to zero next
 
 // modes:
 // 0 = off
@@ -65,6 +65,7 @@ void loop() {
   static bool mode4state = 0;
   static uint8_t mode56counterA = 1;
   static uint8_t mode56counterB = 2;
+  static uint8_t mode7counter = 1;
   static unsigned long lastTime = 0;
 
   if (music) {
@@ -90,11 +91,11 @@ void loop() {
         // once low_power() is called, the microcontroller
         // is basically "bricked" until reset is pressed
         break;
-      case 1: // turn all LEDs on
+      case 1: // full-blast
         fullLED();
         complete = 1;
         break;
-      case 2: // flashing mode
+      case 2: // flashing
         if (abs(millis() - lastTime) > 500) { // 0.5 sec passed
           lastTime = millis();
           mode2state = !mode2state; // toggle
@@ -104,7 +105,7 @@ void loop() {
             clrLED();
         }
         break;
-      case 3: // side-to-side
+      case 3: // see-saw
         if (abs(millis() - lastTime) > 80) { // 100ms passed
           lastTime = millis();
           if (mode3counter >= 1 && mode3counter <= 9)
@@ -143,6 +144,16 @@ void loop() {
           mode56counterA = (mode56counterA >= 11) ? 1 : mode56counterA + 1;
           mode56counterB = (mode56counterB >= 11) ? 1 : mode56counterB + 1;
           setLED(mode56counterB, 0);
+        }
+        break;
+      case 7: // superlike
+        if (abs(millis() - lastTime) > 100) { // 50ms passed
+          lastTime = millis();
+          setLED(mode7counter, 0);
+          setLED(10 - mode7counter, 0);
+          mode7counter = (mode7counter >= 5) ? 1 : mode7counter + 1;
+          setLED(mode7counter, 1);
+          setLED(10 - mode7counter, 1);
         }
         break;
     }
