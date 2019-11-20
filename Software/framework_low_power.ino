@@ -97,6 +97,23 @@ void loop() {
     }
   }
 
+  //  for (int i = 1; i <= 9; i ++) {
+  //    setLED(i, 1);
+  //    delay(90);
+  //  }
+  //  for (int i = 1; i <= 9; i ++) {
+  //    setLED(i, 0);
+  //    delay(90);
+  //  }
+  //  for (int i = 9; i >= 1; i --) {
+  //    setLED(i, 1);
+  //    delay(90);
+  //  }
+  //  for (int i = 9; i >= 1; i --) {
+  //    setLED(i, 0);
+  //    delay(90);
+  //  }
+
   int reading = analogRead(A0);
   // check if music button pressed
   if (abs(reading - btnMusicThreshold) < tolerance) {
@@ -163,8 +180,12 @@ void fullLED() {
 }
 
 void low_power() {
+  // the chosen sleep mode (SLEEP_MODE_PWR_DOWN)
+  // disables pretty much everything except the
+  // watchdog timer and interrupts, neither of
+  // which are being used in this program
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-  ADCSRA &= ~(1 << ADEN);
-  sleep_enable();
-  sleep_cpu();
+  ADCSRA &= ~(1 << ADEN); // disable ADC
+  sleep_enable(); // set Sleep Mode Control Register enable bit to 1
+  sleep_cpu(); // enter sleep mode now
 }
