@@ -13,8 +13,7 @@ const uint8_t dataPin = 0; // DS
 // both buttons are on A0
 // note that the "lights" button resets the chip
 const int btnPin = A0; // Buttons
-const uint8_t lightsDebounce = 50;
-const int musicDebounce = 200;
+const uint8_t debounce = 50;
 const int btnMusicThreshold = 902;
 //const int btnLightThreshold = 798;
 //const int btnBothThreshold  = 722;
@@ -27,7 +26,7 @@ uint8_t mode = 0;
 // This flag is used to check if that's happened.
 uint8_t complete = 0;
 
-bool music = 0;
+uint8_t music = 0;
 uint8_t max_state = 7; // last LED mode, rollover to zero next
 
 // modes:
@@ -76,34 +75,30 @@ void setup() {
   mode = EEPROM.read(0);
   if (mode > max_state)
     mode = 0;
-  delay(lightsDebounce);
+  delay(debounce);
   // write next state into EEPROM
   EEPROM.write(0, mode + 1);
 }
 
 void loop() {
-  // counters and states for light modes
   static bool mode2state = 0;
   static uint8_t mode3counter = 1;
   static bool mode4state = 0;
   static uint8_t mode56counterA = 1;
   static uint8_t mode56counterB = 2;
   static uint8_t mode7counter = 1;
-
-  // counters and timers for music
   static unsigned long lastTime = 0;
-  static unsigned long musicTimer = 0;
-  static int noteCounter = -1; // idk, it just works this way
 
-  if (music) {
-    int noteDuration = 2000 / toneLengths[noteCounter];
-    if (abs(millis() - musicTimer) >= (noteDuration * 1.30)) {
-      musicTimer = millis();
-      noteCounter = (noteCounter >= (sizeof(notes) / sizeof(int))) ? 0 : noteCounter + 1;
-      tone(spkrPin, notes[noteCounter], noteDuration);
-    }
-
-    if (abs(millis() - musicTimer) >= noteDuration) {
+  while (music) {
+    uint8_t size = sizeof(notes) / sizeof(int);
+    for (uint8_t i = 0; i < size; i++) {
+      int noteDuration = 2000 / toneLengths[i];
+      tone(spkrPin, notes[i], noteDuration);
+      if (i % 2) // toggle LEDs on each note
+        fullLED();
+      else
+        clrLED();
+      delay(noteDuration * 1.30);
       noTone();
     }
   }
@@ -186,22 +181,12 @@ void loop() {
     }
   }
 
-  // check if music button pressed
   int reading = analogRead(A0);
-  if ((abs(reading - btnMusicThreshold) < tolerance)) {
-    noteCounter = -1; // reset song, so it doesn't resume from the middle
-    music = !music;
-    if (music) {
-      EEPROM.write(0, mode); // if button is used to turn off music, don't increment mode
-    }
-    else {
-      EEPROM.write(0, mode + 1);
-      noTone();
-    }
-    delay(musicDebounce);
+  // check if music button pressed
+  if (abs(reading - btnMusicThreshold) < tolerance) {
+    music = 1;
   }
 }
-
 
 void setLED(int index, bool state) {
   // the states are all inverted because I'm too lazy to invert
