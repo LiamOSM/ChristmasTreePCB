@@ -91,6 +91,9 @@ void loop() {
 
   while (music) {
     uint8_t size = sizeof(notes) / sizeof(int);
+    // add note counter to determine which note to play
+    // reset to zero if counter == size
+    // check if abs(millis() - lastTime) > noteDuration * 1.30
     for (uint8_t i = 0; i < size; i++) {
       int noteDuration = 2000 / toneLengths[i];
       tone(spkrPin, notes[i], noteDuration);
@@ -185,6 +188,7 @@ void loop() {
   // check if music button pressed
   if (abs(reading - btnMusicThreshold) < tolerance) {
     music = 1;
+    EEPROM.write(0, mode);
   }
 }
 
