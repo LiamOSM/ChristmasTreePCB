@@ -1,3 +1,8 @@
+// In the previous revision, the code was written for a 75k resistor
+// on the music button, but a 36k resistor was included in the kit.
+// This revision includes a software patch so that the boards will
+// work with either a 36k OR 75k resistor (or any value in between)
+
 #include <avr/sleep.h>
 #include <EEPROM.h>
 #include "pitches.h"
@@ -15,10 +20,10 @@ const uint8_t dataPin = 0; // DS
 const int btnPin = A0; // Buttons
 const uint8_t lightsDebounce = 50;
 const int musicDebounce = 200;
-const int btnMusicThreshold = 902;
+const int btnMusicThreshold = 850;
 //const int btnLightThreshold = 798;
 //const int btnBothThreshold  = 722;
-const int tolerance = 30;
+const int tolerance = 100;
 
 uint8_t sr = 0b00000000;
 uint8_t mode = 0;
